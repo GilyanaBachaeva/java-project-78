@@ -4,7 +4,9 @@ plugins {
     id "jacoco"
     id 'application'
 }
-
+application {
+    mainClass.set("hexlet.code.app")
+}
 group = "hexlet.code"
 version = "1.0-SNAPSHOT"
 

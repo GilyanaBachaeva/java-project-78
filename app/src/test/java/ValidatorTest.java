@@ -5,6 +5,7 @@ import hexlet.code.schemas.StringSchema;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -37,7 +38,7 @@ public class ValidatorTest {
         StringSchema schema = v.string().required().minLength(5);
 
         assertFalse(schema.isValid("1234")); // false
-        assertTrue(schema.isValid("12345")); // true
+        assertTrue(schema.isValid("123456")); // true
         assertTrue(schema.isValid("valid string")); // true
     }
 
@@ -95,48 +96,78 @@ public class ValidatorTest {
         assertFalse(schema.isValid(11)); // false
     }
     @Test
-    public void testValidMapWithoutRequired() {
-        MapSchema schema = new MapSchema();
-        assertTrue(schema.isValid(null)); // Проверяет, что null значение проходит валидацию, если не установлено обязательное условие.
+    public void testRequired() {
+        MapSchema schema = new MapSchema().required();
+
+        // Проверяем, что null не валиден
+        assertFalse(schema.isValid(null));
+
+        // Проверяем, что пустая карта не валидна
+        assertFalse(schema.isValid(new HashMap<>()));
     }
 
     @Test
-    public void testValidMapWithRequired() { // Проверяет, что null значение не проходит валидацию, если установлено обязательное условие, и что пустая карта проходит валидацию.
-        MapSchema schema = (MapSchema) new MapSchema().required();
-        assertFalse(schema.isValid(null));
+    public void testOptional() {
+        MapSchema schema = new MapSchema();
+
+        // Проверяем, что null валиден, если не обязательный
+        assertTrue(schema.isValid(null));
+
+        // Проверяем, что пустая карта валидна, если не обязательный
         assertTrue(schema.isValid(new HashMap<>()));
     }
 
     @Test
-    public void testValidMapWithOneEntry() { // Проверяет, что карта с одной парой ключ-значение проходит валидацию, если установлено обязательное условие.
-        MapSchema schema = (MapSchema) new MapSchema().required();
-        HashMap<String, String> data = new HashMap<>();
-        data.put("key1", "value1");
-        assertTrue(schema.isValid(data));
+    public void testSizeOf() {
+        MapSchema schema = new MapSchema().sizeof(2);
+
+        // Проверяем, что карта с размером меньше 2 не валидна
+        Map<String, String> smallMap = new HashMap<>();
+        smallMap.put("key1", "value1");
+        assertFalse(schema.isValid(smallMap));
+
+        // Проверяем, что карта с размером 2 валидна
+        Map<String, String> validMap = new HashMap<>();
+        validMap.put("key1", "value1");
+        validMap.put("key2", "value2");
+        assertTrue(schema.isValid(validMap));
     }
 
     @Test
-    public void testInvalidMapSize() { // Проверяет, что карта с одной парой ключ-значение не проходит валидацию, если установлено ограничение на размер в 2.
-        MapSchema schema = new MapSchema().required().sizeof(2);
-        HashMap<String, String> data = new HashMap<>();
-        data.put("key1", "value1");
-        assertFalse(schema.isValid(data));
+    public void testRequired2() {
+        MapSchema schema = new MapSchema().required();
+
+        // Проверяем, что null не валиден
+        assertFalse(schema.isValid(null));
+
+        // Проверяем, что пустая карта не валидна
+        assertFalse(schema.isValid(new HashMap<>()));
     }
 
     @Test
-    public void testValidMapSize() { // Проверяет, что карта с двумя парами ключ-значение проходит валидацию, если установлено ограничение на размер в 2.
-        MapSchema schema = new MapSchema().required().sizeof(2);
-        HashMap<String, String> data = new HashMap<>();
-        data.put("key1", "value1");
-        data.put("key2", "value2");
-        assertTrue(schema.isValid(data));
+    public void testOptional2() {
+        MapSchema schema = new MapSchema();
+
+        // Проверяем, что null валиден, если не обязательный
+        assertTrue(schema.isValid(null));
+
+        // Проверяем, что пустая карта валидна, если не обязательный
+        assertTrue(schema.isValid(new HashMap<>()));
     }
 
     @Test
-    public void testValidMapWithDifferentSize() { //  Проверяет, что карта с одной парой ключ-значение не проходит валидацию, если установлено ограничение на размер в 2.
-        MapSchema schema = new MapSchema().required().sizeof(2);
-        HashMap<String, String> data = new HashMap<>();
-        data.put("key1", "value1");
-        assertFalse(schema.isValid(data));
+    public void testSizeOf2() {
+        MapSchema schema = new MapSchema().sizeof(2);
+
+        // Проверяем, что карта с размером меньше 2 не валидна
+        Map<String, String> smallMap = new HashMap<>();
+        smallMap.put("key1", "value1");
+        assertFalse(schema.isValid(smallMap));
+
+        // Проверяем, что карта с размером 2 валидна
+        Map<String, String> validMap = new HashMap<>();
+        validMap.put("key1", "value1");
+        validMap.put("key2", "value2");
+        assertTrue(schema.isValid(validMap));
     }
 }

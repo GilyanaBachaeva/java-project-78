@@ -1,34 +1,43 @@
 package hexlet.code.schemas;
 
+import java.util.Map;
+import java.util.function.Predicate;
+import java.util.LinkedHashMap;
+
 public abstract class BaseSchema<T> {
-    protected boolean isRequired = false;
-    private Integer minLength = null;
-    private String contains = null;
-    private Integer size = null;
+    private Map<String, Predicate<T>> data = new LinkedHashMap<>();
+    private boolean isRequired;
 
-    public boolean isValid(T value) {
-        if (isRequired && (value == null || (value instanceof String && ((String) value).isEmpty()))) {
-            return false;
+    /**
+     * Проверяет, является ли объект обязательным для валидации.
+     * <p>
+     * Этот метод позволяет подклассам узнать, является ли объект обязательным.
+     * Если объект обязателен, то он не должен быть null при проверке валидности.
+     * </p>
+     *
+     * @return true, если объект обязателен, иначе false
+     */
+    public boolean isRequired() {
+        return isRequired;
+    }
+
+    /**
+     * Устанавливает статус обязательности для объекта.
+     *
+     * @param required true, если объект должен быть обязательным, иначе false
+     */
+    public void setRequired(boolean required) {
+        this.isRequired = required;
+    }
+
+    public final boolean isValid(T obj) {
+        if (obj == null) {
+            return !isRequired;
+        } else {
+            return data.values().stream().allMatch(condition -> condition.test(obj));
         }
-        return true;
     }
-
-    public BaseSchema<T> required() {
-        this.isRequired = true;
-        return this;
-    }
-
-    public StringSchema minLength(int length) {
-        this.minLength = length;
-        return (StringSchema) this;
-    }
-
-    public StringSchema contains(String substring) {
-        this.contains = substring;
-        return (StringSchema) this;
-    }
-
-    public MapSchema sizeof(int i) {
-        return null;
+    public final void addData(String checkName, Predicate<T> predicate) {
+        data.put(checkName, predicate);
     }
 }
