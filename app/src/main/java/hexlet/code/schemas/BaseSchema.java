@@ -4,6 +4,7 @@ public abstract class BaseSchema<T> {
     protected boolean isRequired = false;
     private Integer minLength = null;
     private String contains = null;
+    private Integer size = null;
 
     public boolean isValid(T value) {
         if (isRequired && (value == null || (value instanceof String && ((String) value).isEmpty()))) {
@@ -25,5 +26,9 @@ public abstract class BaseSchema<T> {
     public StringSchema contains(String substring) {
         this.contains = substring;
         return (StringSchema) this;
+    }
+
+    public MapSchema sizeof(int i) {
+        return null;
     }
 }

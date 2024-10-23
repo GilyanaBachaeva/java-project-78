@@ -35,4 +35,3 @@ public class NumberSchema extends BaseSchema<Number> {
         return true;
     }
 }
-
