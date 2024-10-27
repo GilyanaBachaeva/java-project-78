@@ -3,9 +3,6 @@ plugins {
     id "checkstyle"
     id "jacoco"
 }
-application {
-    mainClass.set("hexlet.code.app")
-}
 group = "hexlet.code"
 version = "1.0-SNAPSHOT"
 
