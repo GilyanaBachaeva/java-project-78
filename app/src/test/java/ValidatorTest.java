@@ -14,7 +14,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class ValidatorTest {
 
     @Test
-    public void testIsValidWithoutRequired() { //Проверяет, что без вызова метода required() пустая строка и null считаются валидными.
+    public void testIsValidWithoutRequired() {
+        //Проверяет, что без вызова метода required() пустая строка и null считаются валидными.
         Validator v = new Validator();
         StringSchema schema = v.string();
 
@@ -23,7 +24,8 @@ public class ValidatorTest {
     }
 
     @Test
-    public void testIsValidWithRequired() { //Проверяет, что после вызова метода required() пустая строка и null становятся невалидными.
+    public void testIsValidWithRequired() {
+        //Проверяет, что после вызова метода required() пустая строка и null становятся невалидными.
         Validator v = new Validator();
         StringSchema schema = (StringSchema) v.string().required();
 
@@ -33,9 +35,11 @@ public class ValidatorTest {
     }
 
     @Test
-    public void testMinLength() { //Проверяет, что строка должна иметь минимальную длину, установленную методом minLength()
+    public void testMinLength() {
+        //Проверяет, что строка должна иметь минимальную длину, установленную методом minLength()
         Validator v = new Validator();
-        StringSchema schema = v.string().required().minLength(5);
+        final int minLeng = 5;
+        StringSchema schema = v.string().required().minLength(minLeng);
 
         assertFalse(schema.isValid("1234")); // false
         assertTrue(schema.isValid("123456")); // true
@@ -43,7 +47,8 @@ public class ValidatorTest {
     }
 
     @Test
-    public void testContains() { //Проверяет, что строка должна содержать определённую подстроку, установленную методом contains()
+    public void testContains() {
+        //Проверяет, что строка должна содержать определённую подстроку, установленную методом contains()
         Validator v = new Validator();
         StringSchema schema = v.string().required().contains("hex");
 
@@ -56,7 +61,8 @@ public class ValidatorTest {
     @Test
     public void testMultipleValidations() { //Проверяет, что все условия валидации работают вместе
         Validator v = new Validator();
-        StringSchema schema = v.string().required().minLength(5).contains("hex");
+        final int minLeng = 5;
+        StringSchema schema = v.string().required().minLength(minLeng).contains("hex");
 
         assertFalse(schema.isValid("")); // false
         assertFalse(schema.isValid("1234")); // false
@@ -66,9 +72,12 @@ public class ValidatorTest {
     }
 
     @Test
-    public void testLastValidationTakesPrecedence() { //Проверяет, что если один валидатор вызывается несколько раз, последний имеет приоритет
+    public void testLastValidationTakesPrecedence() {
+        //Проверяет, что если один валидатор вызывается несколько раз, последний имеет приоритет
         Validator v = new Validator();
-        StringSchema schema = v.string().minLength(10).minLength(4);
+        final int minLeng = 10;
+        final int minLeng1 = 4;
+        StringSchema schema = v.string().minLength(minLeng).minLength(minLeng1);
 
         assertTrue(schema.isValid("Hexlet")); // true
         assertFalse(schema.isValid("Hex")); // false
@@ -77,23 +86,29 @@ public class ValidatorTest {
     public void testNumberSchema() {
         Validator v = new Validator();
         NumberSchema schema = v.number();
+        final int randNumb = 5;
+        final int randNumb1 = 10;
+        final int randNumb2 = -10;
+        final int randNumb3 = 0;
+        final int randNumb4 = 4;
+        final int randNumb5 = 11;
 
-        assertTrue(schema.isValid(5)); // true
+        assertTrue(schema.isValid(randNumb)); // true
         assertTrue(schema.isValid(null)); // true
         assertTrue(schema.positive().isValid(null)); // true
 
         schema.required();
         assertFalse(schema.isValid(null)); // false
-        assertTrue(schema.isValid(10)); // true
+        assertTrue(schema.isValid(randNumb1)); // true
 
-        assertFalse(schema.isValid(-10)); // false
-        assertFalse(schema.isValid(0)); // false
+        assertFalse(schema.isValid(randNumb2)); // false
+        assertFalse(schema.isValid(randNumb3)); // false
 
-        schema.range(5, 10);
-        assertTrue(schema.isValid(5)); // true
-        assertTrue(schema.isValid(10)); // true
-        assertFalse(schema.isValid(4)); // false
-        assertFalse(schema.isValid(11)); // false
+        schema.range(randNumb, randNumb1);
+        assertTrue(schema.isValid(randNumb)); // true
+        assertTrue(schema.isValid(randNumb1)); // true
+        assertFalse(schema.isValid(randNumb4)); // false
+        assertFalse(schema.isValid(randNumb5)); // false
     }
     @Test
     public void testRequired() {
