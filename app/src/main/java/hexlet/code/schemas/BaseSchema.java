@@ -37,7 +37,7 @@ public abstract class BaseSchema<T> {
             return data.values().stream().allMatch(condition -> condition.test(obj));
         }
     }
-    public final void addData(String checkName, Predicate<T> predicate) {
+    protected final void addChecks(String checkName, Predicate<T> predicate) {
         data.put(checkName, predicate);
     }
 }
