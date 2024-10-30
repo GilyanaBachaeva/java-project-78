@@ -1,5 +1,5 @@
 import hexlet.code.Validator;
-import hexlet.code.schemas.MapSchema;
+import hexlet.code.schemas.BaseSchema;
 import hexlet.code.schemas.NumberSchema;
 import hexlet.code.schemas.StringSchema;
 import org.junit.jupiter.api.Test;
@@ -9,7 +9,6 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
 
 public class ValidatorTest {
 
@@ -111,78 +110,43 @@ public class ValidatorTest {
         assertFalse(schema.isValid(randNumb5)); // false
     }
     @Test
-    public void testRequired() {
-        MapSchema schema = new MapSchema().required();
+    public void testMapValidator() {
+        var v = new Validator();
+        var schema = v.map();
 
-        // Проверяем, что null не валиден
-        assertFalse(schema.isValid(null));
-
-        // Проверяем, что пустая карта не валидна
-        assertFalse(schema.isValid(new HashMap<>()));
-    }
-
-    @Test
-    public void testOptional() {
-        MapSchema schema = new MapSchema();
-
-        // Проверяем, что null валиден, если не обязательный
         assertTrue(schema.isValid(null));
-
-        // Проверяем, что пустая карта валидна, если не обязательный
         assertTrue(schema.isValid(new HashMap<>()));
-    }
 
-    @Test
-    public void testSizeOf() {
-        MapSchema schema = new MapSchema().sizeof(2);
-
-        // Проверяем, что карта с размером меньше 2 не валидна
-        Map<String, String> smallMap = new HashMap<>();
-        smallMap.put("key1", "value1");
-        assertFalse(schema.isValid(smallMap));
-
-        // Проверяем, что карта с размером 2 валидна
-        Map<String, String> validMap = new HashMap<>();
-        validMap.put("key1", "value1");
-        validMap.put("key2", "value2");
-        assertTrue(schema.isValid(validMap));
-    }
-
-    @Test
-    public void testRequired2() {
-        MapSchema schema = new MapSchema().required();
-
-        // Проверяем, что null не валиден
+        schema.required();
         assertFalse(schema.isValid(null));
-
-        // Проверяем, что пустая карта не валидна
-        assertFalse(schema.isValid(new HashMap<>()));
-    }
-
-    @Test
-    public void testOptional2() {
-        MapSchema schema = new MapSchema();
-
-        // Проверяем, что null валиден, если не обязательный
-        assertTrue(schema.isValid(null));
-
-        // Проверяем, что пустая карта валидна, если не обязательный
         assertTrue(schema.isValid(new HashMap<>()));
-    }
 
-    @Test
-    public void testSizeOf2() {
-        MapSchema schema = new MapSchema().sizeof(2);
+        schema.sizeof(2);
+        assertFalse(schema.isValid(new HashMap<>()));
+        Map<String, String> actual1 = new HashMap<>();
+        actual1.put("key1", "value1");
+        assertFalse(schema.isValid(actual1));
+        actual1.put("key2", "value2");
+        assertTrue(schema.isValid(actual1));
 
-        // Проверяем, что карта с размером меньше 2 не валидна
-        Map<String, String> smallMap = new HashMap<>();
-        smallMap.put("key1", "value1");
-        assertFalse(schema.isValid(smallMap));
+        Map<String, BaseSchema<String>> schemas = new HashMap<>();
+        schemas.put("firstName", v.string().required().contains("ya"));
+        schemas.put("lastName", v.string().required().contains("ov"));
+        schema.shape(schemas);
 
-        // Проверяем, что карта с размером 2 валидна
-        Map<String, String> validMap = new HashMap<>();
-        validMap.put("key1", "value1");
-        validMap.put("key2", "value2");
-        assertTrue(schema.isValid(validMap));
+        Map<String, String> actual2 = new HashMap<>();
+        actual2.put("firstName", "Kolya");
+        actual2.put("lastName", "Ivanov");
+        assertTrue(schema.isValid(actual2));
+
+        Map<String, String> actual3 = new HashMap<>();
+        actual3.put("firstName", "Maya");
+        actual3.put("lastName", "Krasnova");
+        assertTrue(schema.isValid(actual3));
+
+        Map<String, String> actual4 = new HashMap<>();
+        actual4.put("firstName", "John");
+        actual4.put("lastName", "Jones");
+        assertFalse(schema.isValid(actual4));
     }
 }

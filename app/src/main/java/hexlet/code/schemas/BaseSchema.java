@@ -5,7 +5,7 @@ import java.util.function.Predicate;
 import java.util.LinkedHashMap;
 
 public abstract class BaseSchema<T> {
-    private Map<String, Predicate<T>> data = new LinkedHashMap<>();
+    private Map<String, Predicate<T>> checks = new LinkedHashMap<>();
     private boolean isRequired;
 
     /**
@@ -34,10 +34,10 @@ public abstract class BaseSchema<T> {
         if (obj == null) {
             return !isRequired;
         } else {
-            return data.values().stream().allMatch(condition -> condition.test(obj));
+            return checks.values().stream().allMatch(condition -> condition.test(obj));
         }
     }
     protected final void addChecks(String checkName, Predicate<T> predicate) {
-        data.put(checkName, predicate);
+        checks.put(checkName, predicate);
     }
 }
